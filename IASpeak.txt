@@ -1,0 +1,96 @@
+
+#imports
+library(countcolors)
+print("Hello World!!!")
+library(scatterplot3d)
+library(imager)
+
+
+
+# typical RGB values range between 0 and 255, but R scales them to range between
+# 0 and 1, where 1 is maximum brightness
+
+#defining RGB boundaries by creating a center
+#later, the radii from the RGB points will be defined to create a spherical color space
+#two spheres are created to better capture the pixels indicating vegetation
+center.spherical <- c(0.5581260960, 0.68501913, 0.17267655)
+center1.spherical <- c(0.1947635184, 0.50021722, 0.01559939)
+
+
+#defines path to image
+#typically, this will take the format of "[path/to/directory]/image_name.jpeg"
+image.name <- 'PATH'
+
+#stores and loads image into a variable
+file <- load.image(image.name)
+#plots image on a Cartesian plane
+plot(file)
+
+#specifies RGB triplets to ignore when counting colored pixels in an image
+#here, a primarily blue color space is enclosed, to factor out water area
+a <- c(0.2, 0.2, 0.45)
+b <- c(0, 0, 0)
+
+
+
+#plots pixels with RBG coordinates
+#n indicates amount of points created on graph
+colordistance::plotPixels('/Users/kevinyuan/Downloads/Mariposa.jpg', lower = NULL, upper = NULL, n = 20000,  color.space = "rgb")
+
+
+
+#uses K-means clustering to find n number of color clusters
+kmeans.clusters <- colordistance::getKMeanColors('PATH', n = 4, plotting = TRUE)
+
+#prints rgb triplets and sizes representing clusters
+colordistance::extractClusters(kmeans.clusters, ordering = TRUE)
+
+
+
+#reads image into environment
+map <- jpeg::readJPEG('PATH')
+
+
+#identifies and changes target pixels to magenta
+#magenta is used in this exploration, since it would not appear on the map prior to the countColors function
+countcolors::changePixelColor(map, map.spherical$pixel.idx, target.color="magenta")
+
+
+#counts pixels in color range(s) within defined radii, excluding a range of color to be ignored
+#and changes counted pixels to a color(s)
+#plots the map with the color change
+#rgb radius extended from spherical center
+two.colors <- countcolors::countColors('PATH', color.range="spherical", 
+                                 center = c(center.spherical, center1.spherical), radius = c(0.11,  
+                                 0.175), bg.lower=b, bg.upper=a, plotting = TRUE, 
+                                 target.color=c("magenta", "cyan"))
+
+
+#prints the fraction of the image with the selected coloration
+#excluding the color space defined by bg.lower and bg.upper
+two.colors$pixel.fraction
+
+
+#countColorsInDirectory is a wrapper for countColors
+#it returns both images with modified pixels and pixel.fraction values
+#radius was approximated with trial and error
+final <- countColorsInDirectory('FOLDERPATH', color.range = "spherical", 
+                                center = c(center.spherical, center1.spherical), radius = c(0.11, 
+                                 0.175), bg.lower=b, bg.upper=a, target.color=c("magenta"), 
+                                 plotting = FALSE, save.indicator = TRUE, dpi = 72, 
+                                 return.indicator = FALSE)
+
+#loops through and prints elements of the final array
+for (val in 1:21){
+  print(final[val])
+}
+
+citation(package = "countcolors")
+citation()
+
+At first, It was just like 
+
+Don't eva feel like you gotta yk act a certain way or do something fer my sake. But, I also feel insecure when sometimes you're maybe not responsive to/reciprocating somethin'. I thought about why I was yk feelin' what ah feel, cuz i thought i was bein' ridiculous, cuz why would ah care. I think that insecurity comes from me being vulnerable and yk open in the ways i know how, and then since people r different and ya might not approach things the same way, i didn't really see anything happening on your end, which was scary cuz i got a history of me bein' real honest to people and them usin it as a weapon against me lolz. But when ah thought about it, So basically, my resolution is that ill stop thinking so hard, cuz yk, i trust ya and i. Yeah. 
+
+
+If ah was acting weird before, basically, ah think that ah was scared or something of becomin' yk a nuisance who's kinda just something annoyin ya can't detach, since yk some things ah say n' do are, secondarily, unconscious ways of becomin' yk more vulnerable n' open. Sah when maybe i wasn't getting the same methods of whatever in return, i was like :0 somethin's wrong and ah backtracked, cuz normally if im open to someone and they don't return it, i end up like yk dying or gettin pushed away. And yk, that would kinda suck, cuz if ya didn't know, i kinda like you around. So ah had this weird feeling of dread or something, idk. So i also didn't know how to yk talk about this, cuz im bad at talkin', but after much data analysis, i've come to the conclusion that maybe im kinda stupid, cuz you've bin really yk real n' open ta me ah think, and it doesn't really hafta be yk exactly the same ways ah do things. And plus, obviously if I'm eva tryin' to push ya do do stuff it's a lil messed up. So mah resolution is to stop thinking so much and just yk, enjoy ur mom. 
